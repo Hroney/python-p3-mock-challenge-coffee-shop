@@ -73,6 +73,28 @@ class Customer:
     def create_order(self, coffee, price):
         return Order(self, coffee, price)
     
+    @classmethod
+    def most_aficionado(cls, coffee):
+        customers = {}
+        for value in Order.all:
+            customer_name = value.customer
+            price = value.price
+            if coffee.name == value.coffee.name:
+                if customer_name in customers and price is not None:
+                    customers[customer_name] = price + customers[customer_name]
+                else:
+                    customers[customer_name] = price
+
+        num = None
+        winner = None
+        for customer in customers:
+            if num is None or customers[customer] > num:
+                num = customers[customer]
+                winner = customer
+
+        return winner
+            
+    
 class Order:
 
     all = []
@@ -80,6 +102,7 @@ class Order:
     def __init__(self, customer, coffee, price):
         self.customer = customer
         self.coffee = coffee
+        self._price = None
         self.price = price
         Order.all.append(self)
 
@@ -105,5 +128,6 @@ class Order:
     
     @price.setter
     def price(self, value):
-        if isinstance(value, float) and (value >= 1.0 and value <= 10.0) and not hasattr(self, 'price'):
-            self._price = value
+        if isinstance(value, float) and (value >= 1.0 and value <= 10.0):
+            if not hasattr(self, '_price') or self._price is None:
+                self._price = value
