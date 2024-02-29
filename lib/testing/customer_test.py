@@ -8,6 +8,10 @@ from classes.many_to_many import Order
 class TestCustomer:
     """Customer in many_to_many.py"""
 
+    def setup_method(self):
+        """Set up the initial state before each test method"""
+        Order.all = []
+
     def test_has_name(self):
         """Customer is initialized with name"""
         customer = Customer("Steve")
